@@ -1,5 +1,5 @@
 ---
-title: 'MSDS 6306: Case Study 2 (Group Project)'
+title: 'MSDS 6306 401: Case Study 2'
 author: "Yao Yao, Robert Flamenbaum"
 date: "April 12, 2017"
 output: 
@@ -13,23 +13,31 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #Introduction:
 
-
+Question 2 is a data exploration of orange trees by type, age, and circumference. Orange is a built-in data set for R. \newline
+\newline
+Question 3 is a data exploration of temperatures in various cities and countries over months and years. City temperature is from CityTemp.csv while country temperature is from Temp.csv. \newline
+\newline
+This case study is an exercise of programming in SAS, python, and R for number 1. Question 2 and 3 are an exercise in cleaning and analyzing data using tables and ggplot. R markdown was used to source different data files and the creation of the paper file. \newline
+\newline
+Both data sets are stored in .csv format where headers are imported directly from the original
+data set, where the columns that are not used to answer the questions in the analysis are then eliminated. The columns had their names changed accordingly per analysis, where the full data frame is exported in its own .csv file.
 
 ```{r, warning=FALSE, message=FALSE}
-library(plyr)
-library(ggplot2)
-library(dplyr)
-library(data.table)
-library(pander)
-library(knitr)
-opts_knit$set(root.dir = 'C:\\Users\\Yao\\Dropbox\\dds w14 MSDS 6306 401\\dds CS2 MSDS 6306 401\\Data')
+InstallLoadMultPackage <- function(pkg){
+  new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new.pkg)) 
+    install.packages(new.pkg, dependencies = TRUE)
+  sapply(pkg, require, character.only = TRUE)
+}
+InstallLoadMultPackage(c("plyr", "ggplot2", "dplyr","data.table","pander","knitr"))
+opts_knit$set(root.dir = 'C:\\Users\\Yao\\Documents\\GitHub\\DDS-Case-Study-2\\Data')
 ```
-\newpage
 
 #Question 2 (30 points)
 
 The built-in data set called Orange in R is about the growth of orange trees. The Orange data frame has 3 columns of records of the growth of orange trees.
 ```{r}
+#shows dataframe of Orange
 pander(head(Orange), caption = "Orange Trees Types by Age and Circumference")
 ```
 
@@ -41,8 +49,11 @@ age: a numeric vector giving the age of the tree (days since 1968/12/31)
 
 circumference: a numeric vector of trunk circumferences (mm). This is probably "circumference at breast height", a standard measurement in forestry.
 
+\newpage
+
 ##a)	Calculate the mean and the median of the trunk circumferences for different size of the trees. (Tree)
 ```{r}
+#the dplyr package was used to summarise the mean and circumference of the Orange trees by type
 pander(ddply(Orange, .(Tree), summarize,  MeanCircumference=mean(circumference),
              MedianCircumference=median(circumference)), 
        caption = "Mean and Median of Trunk Circumferences for Different Size of Orange Trees")
@@ -54,6 +65,8 @@ The mean and median circumferences are calculated above for each of the five ora
 
 ##b)	Make a scatter plot of the trunk circumferences against the age of the tree. Use different plotting symbols for different size of trees.
 ```{r}
+#ggplot was used to plot circumference vs age by tree type, with the legend having different colors
+#and symbols for orange tree types. Geom_point was used for the scatterplot
 ggplot(data=Orange,aes(x=age,y=circumference,group=Tree))+
   geom_point(aes(shape=Tree, color=Tree), size = 3)+
   labs(x="Age (Years)",y="Circumference (mm)",title="Trunk Circumference vs Age by Tree Groups")
@@ -64,11 +77,13 @@ When the five orange tree circumferences are plotted against their age, the circ
 
 ##c)	Display the trunk circumferences on a comparative boxplot against tree. Be sure you order the boxplots in the increasing order of maximum diameter.
 ```{r}
+#ggplot was used to plot the distribution of circumference by tree type, with each boxplot having 
+#different colors for tree types. Geom_boxplot was used for the box plots by ascending max diameter
 ggplot(data=Orange,aes(x=Tree,y=circumference,group=Tree))+
   geom_boxplot(aes(shape=Tree, color=Tree))+
   labs(x="Tree Group",y="Circumference (mm)",title="Trunk Circumference by Tree Groups")
 ```
-The mean circumferences are calculated above for each of the five orange tree types by max circumference. Tree 3 had the smallest median circumferences and Tree 4 had the largest median circumferences. This agrees with the table from part a.
+The median circumferences are calculated above for each of the five orange tree types by max circumference. Tree 3 had the smallest median circumferences and Tree 4 had the largest median circumferences. This agrees with the table from part a.
 
 \newpage
 
@@ -76,7 +91,8 @@ The mean circumferences are calculated above for each of the five orange tree ty
 
 Download "Temp" data set at box.com (This was provided to us by local file, not from cloud)
 ```{r}
-Temperature <- read.csv("C:/Users/Yao/Dropbox/dds w14 MSDS 6306 401/dds CS2 MSDS 6306 401/Data/TEMP.csv", 
+#Retrieving the country temperature files
+Temperature <- read.csv("C:\\Users\\Yao\\Documents\\GitHub\\DDS-Case-Study-2\\Data\\TEMP.csv", 
                         stringsAsFactors = FALSE)
 str(Temperature)
 ```
@@ -85,24 +101,28 @@ Dates prior to 1900 were formatted as YYYY-MM-DD, while dates after 1900 were fo
 We are interested in the dates after 1900; therefore, the import format is %m/%d/%Y
 
 ```{r}
+#formatting the date files to extract the data 1900 and after
 Temperature$Date <- as.Date(Temperature$Date, format="%m/%d/%Y")
 Temperature2<-Temperature[rowSums(is.na(Temperature[,1:4]))==FALSE,]
 str(Temperature2)
 row.names(Temperature2) <- NULL
-pander(head(Temperature2), caption = "Monthy Temperatures of Countries Cleaned")
 write.csv(Temperature2, "Temperature2.csv")
+pander(head(Temperature2), caption = "Monthy Temperatures of Countries Cleaned")
 ```
+
 \newpage
 
 ##(i)	Find the difference between the maximum and the minimum monthly average temperatures for each country and report/visualize top 20 countries with the maximum differences for the period since 1900.
 ```{r}
+#In order to find the range, a function was used in the aggregate function to retrieve temp range and
+#temp range uncertainty. The full file is written as descrangestdevtemp1900.csv with the top 20 shown
 Temp1900 <- subset(Temperature2, Date >= as.Date("1900-01-01"))
 write.csv(Temp1900, "Temp1900.csv")
 rangetemp1900 <- aggregate(Monthly.AverageTemp ~ Country, Temp1900, FUN = function(i)max(i) - min(i))
 rangetemp1900stdev <- aggregate(Monthly.AverageTemp.Uncertainty ~ Country, Temp1900, max)
 rangestdevtemp1900 <- merge(y = rangetemp1900stdev, x = rangetemp1900, by ='Country', all=TRUE)
 descrangestdevtemp1900 <- rangestdevtemp1900[order(-rangestdevtemp1900$Monthly.AverageTemp),]
-row.names(descrangestdevtemp1900) <- NULL
+row.names(descrangestdevtemp1900) <- seq(length=nrow(descrangestdevtemp1900))
 descrangestdevtemp1900 <- setnames(descrangestdevtemp1900, 
                                    old = c('Monthly.AverageTemp','Monthly.AverageTemp.Uncertainty'), 
                                    new = c('TempRange','TempRange.Uncertainty'))
@@ -112,9 +132,13 @@ pander(topdescrangestdevtemp1900,
        caption = "Top 20 Countries with the Largest Temperature Range (1900-2013)")
 ```
 
+The top 20 countries with the largest range of temperatures since 1900 are located in the northern hemisphere with Canada, Russia, Mongolia, and Kazakhstan. This could be caused by better reporting for some countries over others, with some countries having larger uncertainty measurements than that of others.
+
 \newpage
 
 ```{r, fig.width=10,fig.height=8}
+#The top 20 countries with the max temperature ranges are graphed in order of ascending range
+#by rainbow color, each with error bars for uncertainty. Use legend for identification
 ggplot(data=topdescrangestdevtemp1900,aes(x=reorder(Country, TempRange),y=TempRange, group = Country))+
   geom_point(aes(color=reorder(Country, TempRange)), size = 4)+
   labs(x="Country (See Legend)",y="Temperature Range (Celcius)",
@@ -124,7 +148,7 @@ ggplot(data=topdescrangestdevtemp1900,aes(x=reorder(Country, TempRange),y=TempRa
                     ymax = TempRange+TempRange.Uncertainty))+
   theme(legend.title=element_blank(), legend.text=element_text(size=14), text = element_text(size=16))
 ```
-The top 20 countries with the largest range of temperatures since 1900 are located in the northern hemisphere with Canada, Russia, Mongolia, and Kazakhstan. This could be caused by better reporting for some countries over others, with some countries having larger uncertainty measurements than that of others.
+The graphical representation of the table shows a better way to visualize the data of the top temperature ranges in ascending order by country. 
 
 Denmark owns Greenland; thus, they have the same error bars despite different climate for those two territories. It might be governmental that the error bars be that large for those 2 countries.
 
@@ -132,27 +156,31 @@ Denmark owns Greenland; thus, they have the same error bars despite different cl
 
 ##(ii)	Select a subset of data called "UStemp" where US land temperatures from 01/01/1990 in Temp data. Use UStemp dataset to answer the followings.
 ```{r}
+#The subset where country is United States and date starts at 1990 is created
 UStemp <- subset(Temp1900, Country == "United States" & Date >= as.Date("1990-01-01"))
 row.names(UStemp) <- NULL
 str(UStemp)
 ```
 The subset of data for UStemp is gathered from Temp1900, where the filtered data only has United States as the country and 1990 as the starting year.
 
-##a)	Create a new column to display the monthly average land temperatures in Fahrenheit (°F).
+##a)	Create a new column to display the monthly average land temperatures in Fahrenheit (F).
 ```{r}
+#Both the temperature and uncertainty are converted from Celcius to Fahrenheit and shown in a table
 UStemp$Monthly.AverageTemp.F <- UStemp$Monthly.AverageTemp*1.8 + 32
 UStemp$Monthly.AverageTemp.F.Uncertainty <- UStemp$Monthly.AverageTemp.Uncertainty*1.8
 write.csv(UStemp, "UStemp.csv")
 pander(head(UStemp), 
        caption = "United States monthly average land temperatures in Celcius and Fahrenheit (1990 - 2013)")
 ```
-United States monthly average land temperatures in Celcius and Fahrenheit from 1990 to 2013.
+
+United States monthly average land temperatures in Celcius and Fahrenheit along with uncertainty calculations from 1990 to 2013.
 
 \newpage
 
 ##b)	Calculate average land temperature by year and plot it.
 The original file has the average land temperature by month.
 ```{r}
+#The table calculations of the average US temperature by year is created
 UStemp$Year <- format(UStemp$Date,format="%Y")
 UStempyear<- ddply(UStemp, .(Year), summarize, AvgTemp.C=round(mean(Monthly.AverageTemp), digits = 2),
                    AvgTemp.C.Uncertainty=round(max(Monthly.AverageTemp.Uncertainty), digits = 2),
@@ -161,9 +189,12 @@ UStempyear<- ddply(UStemp, .(Year), summarize, AvgTemp.C=round(mean(Monthly.Aver
 pander(UStempyear, caption = "Average Yearly United States Temperatures in Celcius and Fahrenheit")
 ```
 
+The average US temperature by year in celcius and fahrenheit along with uncertainty in reporting.
+
 \newpage
 
 ```{r}
+#The graphical representation of average yearly US temperature in Celius with error bars
 ggplot(data=UStempyear,x=Year,y=AvgTemp.C)+
   geom_point(aes(x=Year,y=AvgTemp.C))+
   labs(x="Year",y="Average Temperature (Celcius)",
@@ -171,11 +202,12 @@ ggplot(data=UStempyear,x=Year,y=AvgTemp.C)+
   geom_errorbar(aes(x=Year, ymin = AvgTemp.C-AvgTemp.C.Uncertainty, 
                     ymax = AvgTemp.C+AvgTemp.C.Uncertainty))
 ```
-There are bigger errors at year 2013. The temperature is possibly increasing due to global warming.
+Average yearly United States temperatures in Celcius. There are bigger errors at year 2013. The temperature is possibly increasing due to global warming.
 
 \newpage
 
 ```{r}
+#The graphical representation of average yearly US temperature in Fahrenheit with error bars
 ggplot(data=UStempyear,x=Year,y=AvgTemp.F)+
   geom_point(aes(x=Year,y=AvgTemp.F))+
   labs(x="Year",y="Average Temperature (Fahrenheit)",
@@ -183,7 +215,7 @@ ggplot(data=UStempyear,x=Year,y=AvgTemp.F)+
   geom_errorbar(aes(x=Year, ymin = AvgTemp.F-AvgTemp.F.Uncertainty, 
                     ymax = AvgTemp.F+AvgTemp.F.Uncertainty))
 ```
-Average yearly United States temperatures in Fahrenheit and Celcius. It looks like recent average temperatures are increasing, with a greater uncertaintly bar.
+Average yearly United States temperatures in Fahrenheit. This matches the shape of the Celcius graph exactly on a different temperature scale.
 
 \newpage
 
@@ -191,18 +223,22 @@ Average yearly United States temperatures in Fahrenheit and Celcius. It looks li
 
 (for example, year 2000: add all 12 monthly averages and divide by 12 to get average temperature in 2000. You can do the same thing for all the available years. Then you can calculate the one year difference as 1991-1990, 1992-1991, etc)
 ```{r}
+#The difference of yearly average temperatures for the US in F and C
 UStempyear$AvgTemp.C.Diff<- c(NA, round(diff(UStempyear$AvgTemp.C), digits = 2))
 UStempyear$AvgTemp.F.Diff<- c(NA, round(diff(UStempyear$AvgTemp.F), digits = 2))
 pander(UStempyear[,c(1,2,4,6,7)], 
        caption = "Difference in Yearly Average United States Temperatures in Celcius and Fahrenheit")
 ```
 
+The fluctuations of yearly average temperature of the US looks normal until we reach 2013, where there was a large increase in yearly average temperature.
+
 \newpage
 
 ##(iii)	Download "CityTemp" data set at box.com. Find the difference between the maximum and the minimum temperatures for each major city and report/visualize top 20 cities with maximum differences for the period since 1900.
 (This was provided to us by local file, not from cloud)
 ```{r}
-CityTemp <- read.csv("C:/Users/Yao/Dropbox/dds w14 MSDS 6306 401/dds CS2 MSDS 6306 401/Data/CityTemp.csv", 
+#Retrieveal of the citytemp file
+CityTemp <- read.csv("C:\\Users\\Yao\\Documents\\GitHub\\DDS-Case-Study-2\\Data\\CityTemp.csv", 
                  row.names = NULL, 
                  stringsAsFactors = FALSE)
 str(CityTemp)
@@ -212,11 +248,10 @@ Dates prior to 1900 were formatted as YYYY-MM-DD, while dates after 1900 were fo
 We are interested in the dates after 1900; therefore, the import format is %m/%d/%Y
 
 ```{r}
+#formatting the date files to extract the data 1900 and after
 CityTemp$Date <- as.Date(CityTemp$Date, format="%m/%d/%Y")
 CityTemp2<-CityTemp[rowSums(is.na(CityTemp[,1:5]))==FALSE,]
 CityTemp2<-CityTemp2[,1:5]
-row.names(CityTemp2) <- NULL
-write.csv(CityTemp2, "CityTemp2.csv")
 CityTemp1900 <- subset(CityTemp2, Date >= as.Date("1900-01-01"))
 CityTemp1900$CityCountry <- paste(CityTemp1900$City,",",CityTemp1900$Country)
 row.names(CityTemp1900) <- NULL
@@ -232,21 +267,27 @@ rangecitystdevtemp1900 <- setnames(rangecitystdevtemp1900,
   new = c('TempRange','TempRange.Uncertainty'))
 
 desccityrangestdevtemp1900 <- rangecitystdevtemp1900[order(-rangecitystdevtemp1900$TempRange),]
-row.names(desccityrangestdevtemp1900) <- NULL
+row.names(desccityrangestdevtemp1900) <- seq(length=nrow(desccityrangestdevtemp1900))
 write.csv(desccityrangestdevtemp1900, "desccityrangestdevtemp1900.csv")
 ```
 
 \newpage
 
 ```{r}
+#In order to find temp range, a function was used in the aggregate function to retrieve temp range
+#and temp range uncertainty. The full file is in desccityrangestdevtemp1900.csv with the top 20 shown
 topdesccityrangestdevtemp1900 <- desccityrangestdevtemp1900[1:20,]
 pander(topdesccityrangestdevtemp1900,
        caption = "Top 20 Cities with the Largest Temperature Range (1900-2013)")
 ```
 
+The top 20 cities with the largest range of temperatures since 1900 are located in China, Russia, and the United States. This could be caused by better reporting for cities in those countries than that in other countries.
+
 \newpage
 
 ```{r, fig.width=10,fig.height=8}
+#The top 20 cities with the max temperature ranges are graphed in order of ascending range
+#by rainbow color, each with error bars for uncertainty. Use legend for identification
 ggplot(data=topdesccityrangestdevtemp1900,aes(x=reorder(CityCountry, TempRange),
                                               y=TempRange, group = CityCountry))+
   geom_point(aes(color=reorder(CityCountry, TempRange)), size = 4)+
@@ -257,34 +298,46 @@ ggplot(data=topdesccityrangestdevtemp1900,aes(x=reorder(CityCountry, TempRange),
                     ymax = TempRange+TempRange.Uncertainty))+
   theme(legend.title=element_blank(), legend.text=element_text(size=14), text = element_text(size=16))
 ```
-The top 20 cities with the largest range of temperatures since 1900 are located in China, Russia, and the United States. This could be caused by better reporting for cities in those countries than that in other countries, with some cities having larger uncertainty measurements than that of others.
+The graphical representation of the table shows a better way to visualize the data of the top temperature ranges in ascending order by city. 
+
+Some cities having larger uncertainty measurements than that of others and Chineses cities dominate this plot, possibly due to better reporting in those cities.
 
 \newpage
 
 ##(iv)	Compare the two graphs in (i) and (iii) and comment it.
 ```{r}
+#The top city ranges are converted into country ranges from part (iii) and then compared with
+#the top country ranges from part (i) by tables
 rangeCCtemp1900 <- aggregate(Monthly.AverageTemp ~ Country, CityTemp1900, FUN = function(i)max(i) - min(i))
 rangeCCstdevtemp1900 <- aggregate(Monthly.AverageTemp.Uncertainty ~ Country, CityTemp1900, max)
 rangeCCstdevtemp1900 <- merge(y = rangeCCstdevtemp1900, x = rangeCCtemp1900, by ='Country', all=TRUE)
 colnames(rangeCCstdevtemp1900) <- c("Country", "AvgTempRange.ByCity", "StdevTempRange.ByCity")
 descrangeCCstdevtemp1900 <- rangeCCstdevtemp1900[order(-rangeCCstdevtemp1900$AvgTempRange.ByCity),]
-row.names(descrangeCCstdevtemp1900) <- NULL
+row.names(descrangeCCstdevtemp1900) <- seq(length=nrow(descrangeCCstdevtemp1900))
 pander(descrangeCCstdevtemp1900[1:20,], 
        caption = "Top 20 Countries with the Largest Temperature Range from City Data (1900-2013)")
 ```
 
-\newpage
+From city temperature data converted into country temperature range (iii), the top 3 countries with max temperature ranges are China, Russia, and Canada. This could be caused by better reporting for some cities over others, with some cities having larger uncertainty measurements than that of others, which caused the whole country to have a larger temperature range.
 
 ```{r}
 colnames(descrangestdevtemp1900) <- c("Country", "AvgTempRange.ByCountry", "StdevTempRange.ByCountry")
+row.names(descrangestdevtemp1900) <- seq(length=nrow(descrangestdevtemp1900))
 pander(descrangestdevtemp1900[1:20,], 
        caption = "Top 20 Countries with the Largest Temperature Range from Country Data (1900-2013)")
+```
+
+From country temperature data (i), the top 3 countries with max temperature ranges are Kazakhstan, Mongolia, and Russia. This could be caused by better reporting for some countries over others, with some countries having larger uncertainty measurements than that of others.
+
+```{r}
+#The countries from (i) are then paired with matching countries from city data from part (iii) to do a cross
+#comparison of the country ranges
 comparetemp1900 <- merge(y = descrangeCCstdevtemp1900, x = descrangestdevtemp1900, 
                          by ='Country', all=TRUE)
 compareMtemp1900<-comparetemp1900[rowSums(is.na(comparetemp1900[,1:4]))==FALSE,]
 CITYcompareMtemp1900 <- compareMtemp1900[order(-compareMtemp1900$AvgTempRange.ByCity),]
 TopCITYcompareMtemp1900 <- CITYcompareMtemp1900[1:20,]
-
+#The data are then bound together with a new column that describes city data from country data for plotting
 TopCITYcity <- subset(TopCITYcompareMtemp1900, 
                       select = c("Country","AvgTempRange.ByCity", "StdevTempRange.ByCity"))
 TopCITYcity2 <- cbind(TopCITYcity, Type="City")
@@ -302,6 +355,8 @@ TopCITY2 <- rbind(TopCITYcountry3,TopCITYcity3)
 \newpage
 
 ```{r, fig.width=10,fig.height=8}
+#Both the city and country temperature max ranges are plotted on the same graph, with cities
+#in the same country converted into country data for comparison
 ggplot(data=TopCITY2,aes(x=reorder(Country, AvgTempRange),y=AvgTempRange, group = Type))+
   geom_point(aes(color=reorder(Country, AvgTempRange), shape=Type), size = 4)+
   labs(x="Country (See Legend)",y="Temperature Range (Celcius)",
@@ -310,12 +365,35 @@ ggplot(data=TopCITY2,aes(x=reorder(Country, AvgTempRange),y=AvgTempRange, group 
   geom_errorbar(aes(ymin = AvgTempRange-StdevTempRange, ymax = AvgTempRange+StdevTempRange))+
   theme(legend.title=element_blank(), legend.text=element_text(size=14), text = element_text(size=16))
 ```
-From city temperature data, the top 3 countries with max temperature ranges are China, Russia, and Canada. This could be caused by better reporting for some countries over others, with some countries having larger uncertainty measurements than that of others.
 
-From country temperature data, the top 3 countries with max temperature ranges are Kazakhstan, Mongolia, and Russia. This could be caused by better reporting for some countries over others, with some countries having larger uncertainty measurements than that of others.
+For the scatterplot, there are discrepencies between the city and country data that the uncertainty errors cannot account for when plotted and cross compared with each other. This could be caused by average country temperatures vs average city temperatures, where some of the countries occupy different climate zones as depicted by city temperature ranges to account for the larger country temperature fluctuations and range.
 
-There are discrepencies between the city and country data that the uncertainty errors cannot account for when plotted and cross compared with each other. This could be caused by average country temperatures vs average city temperatures, where the city's average temperatures could fluctuate more than country's average temperatures.
+\newpage
 
 #Conclusion:
 
-Some of the land mass of countries occupy different climate zones to account for the temperature fluctuations and range.
+2)a) The order from smallest to largest mean and median circumferences is tree: 3, 1, 5, 2, 4.
+
+2)b) The circumference for younger trees are about the same while that for older trees have a larger deviation from each other.
+
+2)c) The data had it so that the median circumference had a direct correlation to the maximum circumference per tree type.
+
+3)i) Countries located in the northern hemisphere dominate the top 20 countries with the largest temperature range, possibly due to better reporting in these countries with some governments having larger uncertainty in their measurements than for others.
+
+3)ii)a) When converting temperature uncertainty from Celcius to Fahrenheit, do not add 32 and instead only multiply by 1.8.
+
+3)ii)b) The temperature is possibly increasing in the US due to global warming. The Celcius and Fahrenheit plots have the same shape with a different temperature scale.
+
+3)ii)c) The fluctuations of yearly average temperature of the US looks normal until we reach 2013, where there was a large increase in yearly average temperature.
+
+3)iii) Cities located in China dominate the top 20 cities with the largest temperature range, possibly due to better reporting in these cities. Also, Bagdad made the top 20 list despite it not being too far north in latitude as the other cities.
+
+3)iv) From city temperature data, the top 3 countries with max temperature ranges are China, Russia, and
+Canada. From country temperature data, the top 3 countries with max temperature ranges are Kazakhstan, Mongolia, and Russia. There are discrepencies between the city and country data that the uncertainty errors cannot account for when plotted and cross compared with each other. This could be caused by average country temperatures vs average city temperatures, where some of the countries occupy different climate zones as depicted by city temperature ranges to account for the larger country temperature fluctuations and range.
+
+#Further Work:
+
+Q2: We can do summary reports and graphical analysis for all the built-in data sets for R.
+
+Q3: We could increase the data set to include all the dates prior to 1900 to plot how the trend is global warming is affecting the temperature trends of every country and city. We can plot the trend of global warming and how that increases or reduces temperature range of countries and cities over time. We can use the temperature trend up to 2013 to predict how the average temperature and temperature range is going to increase for this year by comparing them with the actual data.
+
