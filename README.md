@@ -50,15 +50,15 @@ Question 2 and 3 are an exercise in cleaning and analyzing data using tables and
 
 "UStemp.csv" is the cleaned average monthly temperatures of US for 1990-2013
 
-"descrangestdevtemp1900.csv" is the countries with the top temperature range by descending order
+"DescRangeStdevTemp1900.csv" is the countries with the top temperature range by descending order
 
-"desccityrangestdevtemp1900.csv" is the cities with the top temperature range by descending order
+"DescCityRangeStdevTemp1900.csv" is the cities with the top temperature range by descending order
 
 # Other Directory:
 
 "Orange.csv" is the original orange dataset
 
-"Orange.xlsx" is the original orange dataset with graphs
+"Orange.xlsx" is the original orange dataset with prework
 
 "caseStudy2.pdf" is the original assignment sheet
 
