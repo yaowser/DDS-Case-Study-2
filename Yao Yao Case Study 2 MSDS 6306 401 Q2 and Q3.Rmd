@@ -69,7 +69,7 @@ The mean and median circumferences are calculated above for each of the five ora
 #and symbols for orange tree types. Geom_point was used for the scatterplot
 ggplot(data=Orange,aes(x=age,y=circumference,group=Tree))+
   geom_point(aes(shape=Tree, color=Tree), size = 3)+
-  labs(x="Age (Years)",y="Circumference (mm)",title="Trunk Circumference vs Age by Tree Groups")
+  labs(x="Age (Days)",y="Circumference (mm)",title="Trunk Circumference vs Age by Tree Groups")
 ```
 When the five orange tree circumferences are plotted against their age, the circumference for younger trees are all about the same while the circumference for older trees have a larger deviation.
 
