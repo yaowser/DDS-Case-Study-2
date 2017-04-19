@@ -1,6 +1,6 @@
 # DDS-Case-Study-2
 
-This depository is Case Study 2 for Doing Data Science 6306 Section 401 Tuesdays at 9:30 - 11:00 PM EST, Cohort 2017 Spring semester at SMU -- "DDS-Case-Study-2" for short. Author: Yao Yao. This project was submitted through GitHub on RStudio version 1.0.136.
+This depository is Case Study 2 for Doing Data Science 6306 Section 401 Tuesdays at 9:30 - 11:00 PM EST, Cohort 2017 Spring semester at SMU -- "DDS-Case-Study-2" for short. Author: Yao Yao/Robert Flamenbaum. This project was submitted through GitHub on RStudio version 1.0.136.
 
 There are 3 directories in this depository: Data, Question 1 Code, and Other with the Paper files in the Root directory
 
@@ -10,19 +10,23 @@ This case study is a cumlative exercise in programming of what we learned in MSD
 
 Question 1 covers briefly SAS, python, and R code for matrix creation.
 
-Question 2 is a data exploration of orange trees by type, age, and circumference. Orange is a built-in data set for R.
+Question 2 is a data exploration of stock and time series for log returns and volatility.
 
-Question 3 is a data exploration of temperatures in various cities and countries over months and years. City temperature is from CityTemp.csv while country temperature is from Temp.csv.
+Question 3 is a data exploration of orange trees by type, age, and circumference. Orange is a built-in data set for R.
 
-Question 2 and 3 are an exercise in cleaning and analyzing data using tables and ggplot. R markdown was used to source different data files and the creation of the paper file.
+Question 4 is a data exploration of temperatures in various cities and countries over months and years. City temperature is from CityTemp.csv while country temperature is from Temp.csv.
+
+Question 5 is a plot of sine and cosine in polar coordinates.
+
+Questions 2 to 4 are exercises in cleaning and analyzing data using tables and ggplot. R markdown was used to source different data files and the creation of the paper file.
 
 # Root Directory:
 
-"Yao Yao Case Study 2 MSDS 6306 401 Q1.docx" is the document file to capture the code and the screenshot outputs for question 1.
+"Yao Yao Robert Flamenbaum Case Study 2 MSDS 6306 401 Q1.docx" is the document file to capture the code and the screenshot outputs for question 1.
 
-"Yao Yao Case Study 2 MSDS 6306 401 Q2 and Q3.Rmd" is the R markdown file that is fully follows the rubric of annotating code for analysis with conclusive statements
+"Yao Yao Robert Flamenbaum Case Study 2 MSDS 6306 401 Q2 Q3 Q4 Q5.Rmd" is the R markdown file that is fully follows the rubric of annotating code for analysis with conclusive statements
 
-"Yao_Yao_Case_Study_2_MSDS_6306_401_Q2_and_Q3.pdf" is the final knitted paper that combines text, code, and output into one conclusive file ready for submission
+"Yao_Yao_Robert_Flamenbaum_Case_Study_2_MSDS_6306_401_Q2_Q3_Q4_Q5.pdf" is the final knitted paper that combines text, code, and output into one conclusive file ready for submission
 
 "DDS-Case-Study-2.Rproj" is the R project file for Rstudio
 
@@ -35,6 +39,16 @@ Question 2 and 3 are an exercise in cleaning and analyzing data using tables and
 "CS2.ipynb" is the python code to create the matrix
 
 # Data directory:
+
+"DailyClosingPrice.csv" is the raw data from the AGIO stock
+
+"LogReturns.csv" is the log returns of the AGIO stock
+
+"vol10.csv" is the volatility decay at 10
+
+"vol30.csv" is the volatility decay at 30
+
+"vol100.csv" is the volatility decay at 100
 
 "TEMP.csv" is the original data of average monthly temperatures of countries
 
@@ -60,6 +74,8 @@ Question 2 and 3 are an exercise in cleaning and analyzing data using tables and
 
 "Orange.xlsx" is the original orange dataset with prework
 
-"caseStudy2.pdf" is the original assignment sheet
+"Case study 2 -401.pdf" is the original assignment sheet
 
-"caseStudy2.docx" is the original assignment sheet converted into word
+"Case study 2.docx" is the original assignment sheet converted into word
+
+"SP500.txt" is the scaffolding code to do Question 2
