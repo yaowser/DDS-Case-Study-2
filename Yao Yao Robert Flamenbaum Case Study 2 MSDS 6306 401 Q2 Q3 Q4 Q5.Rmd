@@ -127,12 +127,10 @@ Vol <- function(d, logreturns)
   sqrt(varlist)
 }
 #retrieve volatility for decays 10, 30, and 100
-vol10 <- Vol(10,stockAGIO$LogReturns)
-vol30 <- Vol(30,stockAGIO$LogReturns)
-vol100 <- Vol(100,stockAGIO$LogReturns)
-write.csv(vol10, "vol10.csv")
-write.csv(vol30, "vol30.csv")
-write.csv(vol100, "vol100.csv")
+stockAGIO$LogReturns$vol10 <- Vol(10,stockAGIO$LogReturns$Close)
+stockAGIO$LogReturns$vol30 <- Vol(30,stockAGIO$LogReturns$Close)
+stockAGIO$LogReturns$vol100 <- Vol(100,stockAGIO$LogReturns$Close)
+write.csv(stockAGIO$LogReturns, "LogReturnsVolatility.csv")
 ```
 The volatility over the entire length of Agios Pharmaceuticals Inc (AGIO) for 10, 30, and 100 decay factors are calculated.
 
@@ -140,17 +138,20 @@ The volatility over the entire length of Agios Pharmaceuticals Inc (AGIO) for 10
 
 ##Plot the results, overlaying the volatility curves on the data, just as was done in the S&P example.
 ```{r}
-#plotting the overlay of 3 volatility functions over the same index
-#index is used because time series skip certain dates
-plot(vol10,type="l",xlab="index",ylab="Volatility")
+#plotting the overlay of 3 volatility functions over the same period
+plot(stockAGIO$LogReturns$vol10,type="l",xlab="Year",ylab="Volatility", ylim= c(0,0.12))
+par(new=TRUE)
+plot(stockAGIO$LogReturns$vol30,type="l",xlab="Year",ylab="Volatility", ylim = c(0,0.12), 
+     col="red")
+par(new=TRUE)
+plot(stockAGIO$LogReturns$vol100,type="l",xlab="Year",ylab="Volatility", ylim = c(0,0.12), 
+     col="blue")
 title(main=paste("Plot of volatility for",stockAGIO$Ticker,"(",
                  stockAGIO$BeginDate,"to",stockAGIO$EndDate,")"))
-lines(vol30,type="l", col="red")
-lines(vol100,type="l",col="blue")
-legend(800,.12,c("10","30","100"), lty=c(1,1,1),lwd=c(2,2,2),col=c("black","red","blue"),
-       title="Decay Factor")
+legend("topright",c("10","30","100"),lty=c(1,1,1),lwd=c(2,2,2),
+       col=c("black","red","blue"),title="Decay Factor")
 ```
-The volatility over the entire length of Agios Pharmaceuticals Inc (AGIO) for 10, 30, and 100 decay factors plotted. Due to different decay factors, the index is used instead of year for all the graphs to overlay on the same axis. All three volatility curves hover around 0.05.
+The volatility over the entire length of Agios Pharmaceuticals Inc (AGIO) for 10, 30, and 100 decay factors plotted. All three volatility curves hover around 0.05.
 
 \newpage
 
