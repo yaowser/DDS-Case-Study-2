@@ -15,38 +15,149 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #Introduction:
 
-This case study is an exercise of programming in SAS, python, and R for number 1. Question 2 and 3 are an exercise in cleaning and analyzing data using tables and ggplot. R markdown was used to source different data files and the creation of the paper file. \newline
+This case study is an exercise of programming in SAS, python, and R for number 1. Question 2, 3, and 4 are exercises in cleaning and analyzing data using tables and ggplot. R markdown was used to source different data files and the creation of the paper file. \newline
 \newline
 The following code is an exploratory analysis on three data sets which will demonstrate the various ways of transforming and analyzing data in R. The results of the analysis are meant to provide a clear way to view the data sets and obtain key observations in the data. \newline
 \newline
-Question 2 uses a data set called Orange, which consists of 35 observations and 3 variables. The first variable, Tree, simply identifies the tree being measured. The second variable, age, describes the age of the tree in days after 12/31/1968. The third variable, circumference, is a measurement in millimeters of the tree circumference at breast height. The data consists of 5 trees which are assumed to be the same age. The trees were measured on 7 different occasions at the same time interval. The measurements, taken at each time interval, provide a detailed view of how the trees in the study vary in growth over time. \newline
+Question 2 is an exploration of stock data and time series analysis of volatility, trends, and log returns. \newline
 \newline
-Question 3 parts i and ii uses a data set called Temp, which consists of a total of 574,223 observations and 4 variables. Each record measures average monthly temperature in degrees Celsius for countries spanning a time range from 1838 to 2013. There is also a variable called Monthly.AverageTemp.Uncertainty, which notes the level of error in each of the observations.  There is no treatment or other descriptive attributes, so no conclusions will be able to be made from this data set. The data can however be used to observe any discernable patterns that exist in the data set. \newline
+Question 3 uses a data set called Orange, which consists of 35 observations and 3 variables. The first variable, Tree, simply identifies the tree being measured. The second variable, age, describes the age of the tree in days after 12/31/1968. The third variable, circumference, is a measurement in millimeters of the tree circumference at breast height. The data consists of 5 trees which are assumed to be the same age. The trees were measured on 7 different occasions at the same time interval. The measurements, taken at each time interval, provide a detailed view of how the trees in the study vary in growth over time. \newline
 \newline
-Question 3 parts iii and iv uses a data set called CityTemp, which consists of 237,200 observations of 7 variables. The data consists of all the same variables as Temp, but with the addition of 3 variables which narrow down the geographic region of the measured data to cities within the countries. Also, a latitude and longitude are given for each observation. It is unclear as to where the latitude and longitude reside within the confines of the city in question. The coordinates could point to the geographic center of the city, or perhaps, it may point to an actual sampling point within the city. For the purposes of this study, which does not include a geographically acute analysis, it is not important to know the exact location where the coordinates point to. \newline
+Question 4 parts i and ii uses a data set called Temp, which consists of a total of 574,223 observations and 4 variables. Each record measures average monthly temperature in degrees Celsius for countries spanning a time range from 1838 to 2013. There is also a variable called Monthly.AverageTemp.Uncertainty, which notes the level of error in each of the observations.  There is no treatment or other descriptive attributes, so no conclusions will be able to be made from this data set. The data can however be used to observe any discernable patterns that exist in the data set. \newline
 \newline
-Both data sets are stored in .csv format where headers are imported directly from the original
+Question 4 parts iii and iv uses a data set called CityTemp, which consists of 237,200 observations of 7 variables. The data consists of all the same variables as Temp, but with the addition of 3 variables which narrow down the geographic region of the measured data to cities within the countries. Also, a latitude and longitude are given for each observation. It is unclear as to where the latitude and longitude reside within the confines of the city in question. The coordinates could point to the geographic center of the city, or perhaps, it may point to an actual sampling point within the city. For the purposes of this study, which does not include a geographically acute analysis, it is not important to know the exact location where the coordinates point to. \newline
+\newline
+Question 5 is an exploration of polar coordinates for sine and consine.\newline
+\newline
+All data sets are stored in .csv format where headers are imported directly from the original
 data set, where the columns that are not used to answer the questions in the analysis are then eliminated. The columns had their names changed accordingly per analysis, where the full data frame is exported in its own .csv file.
+
+\newpage
 
 #Directions to run the code:
 
 ```{r, warning=FALSE, message=FALSE}
+opts_knit$set(root.dir = 'C:\\Users\\Yao\\Documents\\GitHub\\DDS-Case-Study-2\\Data')
 InstallLoadMultPackage <- function(pkg){
   new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
   if (length(new.pkg)) 
     install.packages(new.pkg, dependencies = TRUE)
   sapply(pkg, require, character.only = TRUE)
 }
-InstallLoadMultPackage(c("plyr", "ggplot2", "dplyr","data.table","pander","knitr"))
+InstallLoadMultPackage(c("plyr", "ggplot2", "dplyr","data.table","pander","knitr","tseries","zoo"))
+```
+
+#Question 2 (15 points)
+
+Please watch videos1 and 2 in week 11 lecture assignment. You can download the code which used for S&P from files tab. \newline
+\newline
+Please do the following with your assigned stock. Yao and Robert: AGIO
+
+##Download the data.
+```{r, message=FALSE, warning=FALSE}
+#Function to download the historical data and calculates log returns and historical volatility
+#Returns dataframe of 8 sets of data
+AnalyzeStock <- function(ticker){
+  DailyClosingPrice <- get.hist.quote(ticker,quote="Close",quiet=TRUE)  
+  DailyClosingPrice<-na.trim(DailyClosingPrice, sides = "both")
+  begindt <- start(DailyClosingPrice)
+  enddt <- end(DailyClosingPrice)
+  obs=length(DailyClosingPrice)
+  logreturns <- log(lag(DailyClosingPrice))-log(DailyClosingPrice)
+  logreturns <- na.trim(logreturns, sides = "both")
+  # 252 trading days per year
+  vol <- round(sd(logreturns) * sqrt(252)*100,2)
+  plottitle <- paste("Historical Closing price for ",ticker," (",begindt, " to ", enddt,")\n",
+                     " Obs = ",obs,"  ","Historical Volatility = ",vol,sep="")
+  list(Ticker = ticker,
+       Data=DailyClosingPrice,
+       Obs=obs,
+       LogReturns=logreturns,
+       BeginDate=begindt,
+       EndDate=enddt,
+       Volatility=vol,
+       PlotTitle = plottitle
+  )
+}
 ```
 
 \newpage
 
-#Question 2 (30 points)
+```{r}
+#plots the stock with crucial information in the title
+stockAGIO <- AnalyzeStock("AGIO")
+write.csv(stockAGIO$Data, "DailyClosingPrice.csv")
+autoplot.zoo(stockAGIO$Data) + 
+  ggtitle(stockAGIO$PlotTitle) + xlab("Year") + ylab("Closing Price (U.S. Dollars)")
+```
+Historical closing prices for Agios Pharmaceuticals Inc (AGIO) in US dollars are graphed from starting date to current day. AGIO is a recent stock that started in 2013 with peak prices in 2015. 
+
+\newpage
+
+##Calculate log returns.
+```{r}
+#plots the log returns and writes it
+write.csv(stockAGIO$LogReturns, "LogReturns.csv")
+autoplot.zoo(stockAGIO$LogReturns) + 
+  ggtitle("Log Returns for Stock AGIO") + xlab("Year") + ylab("Log Returns (log scale)")
+```
+The log returns on the log scale for Agios Pharmaceuticals Inc (AGIO) in US dollars are graphed from starting date to current day. The log returns hover slightly above 0 for positive investment.
+
+\newpage
+
+##Calculate volatility measure.
+```{r}
+paste("Historical Volatility =",stockAGIO$Volatility)
+```
+The historical volatitlity measure of Agios Pharmaceuticals Inc (AGIO) is 78.66, which used 252 as the number of trading days in the calculation.
+
+##Calculate volatility over entire length of series for various three different decay factors.
+```{r}
+# volatility function
+Vol <- function(d, logreturns)
+{
+  var = 0
+  lam = 0
+  varlist <- c()
+  for (r in logreturns) {
+    lam = lam*(1 - 1/d) + 1
+    var = (1 - 1/lam)*var + (1/lam)*r^2
+    varlist <- c(varlist, var)
+  }
+  sqrt(varlist)
+}
+#retrieve volatility for decays 10, 30, and 100
+vol10 <- Vol(10,stockAGIO$LogReturns)
+vol30 <- Vol(30,stockAGIO$LogReturns)
+vol100 <- Vol(100,stockAGIO$LogReturns)
+write.csv(vol10, "vol10.csv")
+write.csv(vol30, "vol30.csv")
+write.csv(vol100, "vol100.csv")
+```
+The volatility over the entire length of Agios Pharmaceuticals Inc (AGIO) for 10, 30, and 100 decay factors are calculated.
+
+\newpage
+
+##Plot the results, overlaying the volatility curves on the data, just as was done in the S&P example.
+```{r}
+#plotting the overlay of 3 volatility functions over the same index
+#index is used because time series skip certain dates
+plot(vol10,type="l",xlab="index",ylab="Volatility")
+title(main=paste("Plot of volatility for",stockAGIO$Ticker,"(",
+                 stockAGIO$BeginDate,"to",stockAGIO$EndDate,")"))
+lines(vol30,type="l", col="red")
+lines(vol100,type="l",col="blue")
+legend(800,.12,c("10","30","100"), lty=c(1,1,1),lwd=c(2,2,2),col=c("black","red","blue"),
+       title="Decay Factor")
+```
+The volatility over the entire length of Agios Pharmaceuticals Inc (AGIO) for 10, 30, and 100 decay factors plotted. Due to different decay factors, the index is used instead of year for all the graphs to overlay on the same axis. All three volatility curves hover around 0.05.
+
+\newpage
+
+#Question 3 (20 points)
 
 The built-in data set called Orange in R is about the growth of orange trees. The Orange data frame has 3 columns of records of the growth of orange trees.
 ```{r}
-opts_knit$set(root.dir = 'C:\\Users\\Yao\\Documents\\GitHub\\DDS-Case-Study-2\\Data')
 #shows dataframe of Orange
 pander(head(Orange), caption = "Orange Trees Types by Age and Circumference")
 ```
@@ -99,7 +210,7 @@ Observations of the Orange data demonstrate that all 5 trees started out at roug
 
 \newpage
 
-#Question 3 (55 points)
+#Question 4 (45 points)
 
 Download "Temp" data set at box.com (This was provided to us by local file, not from cloud)
 ```{r}
@@ -386,30 +497,57 @@ Observations show that when using the finer geographic area of city as opposed t
 
 \newpage
 
+#Question 5 (10 points)
+
+Semester End Bonus: Run the following code in R and paste the final graph.
+```{r}
+#plots sine and cosine of t in polar coordinates
+t<-seq(0,10,length=1000)
+x<-sqrt(t)*cos(2*pi*t)
+y<-sqrt(t)*sin(2*pi*t)
+plot(x,y,axes=F,type="l",lwd=3,xlab="x(t)",ylab="y(t)",col="red")
+axis(1,at=seq(-3,3,by=0.5),labels=seq(-3,3,by=0.5))
+axis(2)
+box()
+title(main=expression(paste("(x(t),y(t)) with polar coordinates",(list(sqrt(t),2*pi*t)))))
+```
+
+Very cool graph of a swirl when cosine and sine are plotted against each other in polar coordinates.
+
+\newpage
+
 #Conclusion:
 
-2)a) The order from smallest to largest mean and median circumferences is tree: 3, 1, 5, 2, 4.
+2) AGIO is a recent stock that started in 2013 with peak prices in 2015 with its log returns hover slightly above 0 for positive investment. The historical volatitlity was 78.66, with the volatility curves hovering around 0.05.
 
-2)b) The circumference for younger trees are about the same while that for older trees have a larger deviation from each other.
+3)a) The order from smallest to largest mean and median circumferences is tree: 3, 1, 5, 2, 4.
 
-2)c) The data had it so that the median circumference had a direct correlation to the maximum circumference per tree type.
+3)b) The circumference for younger trees are about the same while that for older trees have a larger deviation from each other.
 
-3)i) Countries located in the northern hemisphere dominate the top 20 countries with the largest temperature range, possibly due to better reporting in these countries with some governments having larger uncertainty in their measurements than for others.
+3)c) The data had it so that the median circumference had a direct correlation to the maximum circumference per tree type.
 
-3)ii)a) When converting temperature uncertainty from Celcius to Fahrenheit, do not add 32 and instead only multiply by 1.8.
+4)i) Countries located in the northern hemisphere dominate the top 20 countries with the largest temperature range, possibly due to better reporting in these countries with some governments having larger uncertainty in their measurements than for others.
 
-3)ii)b) The temperature is possibly increasing in the US due to global warming. The Celcius and Fahrenheit plots have the same shape with a different temperature scale.
+4)ii)a) When converting temperature uncertainty from Celcius to Fahrenheit, do not add 32 and instead only multiply by 1.8.
 
-3)ii)c) The fluctuations of yearly average temperature of the US looks normal until we reach 2013, where there was a large increase in yearly average temperature.
+4)ii)b) The temperature is possibly increasing in the US due to global warming. The Celcius and Fahrenheit plots have the same shape with a different temperature scale.
 
-3)iii) Cities located in China dominate the top 20 cities with the largest temperature range, possibly due to better reporting in these cities. Also, Bagdad made the top 20 list despite it not being too far north in latitude as the other cities.
+4)ii)c) The fluctuations of yearly average temperature of the US looks normal until we reach 2013, where there was a large increase in yearly average temperature.
 
-3)iv) From city temperature data, the top 3 countries with max temperature ranges are China, Russia, and
+4)iii) Cities located in China dominate the top 20 cities with the largest temperature range, possibly due to better reporting in these cities. Also, Bagdad made the top 20 list despite it not being too far north in latitude as the other cities.
+
+4)iv) From city temperature data, the top 3 countries with max temperature ranges are China, Russia, and
 Canada. From country temperature data, the top 3 countries with max temperature ranges are Kazakhstan, Mongolia, and Russia. There are discrepencies between the city and country data that the uncertainty errors cannot account for when plotted and cross compared with each other. This could be caused by average country temperatures vs average city temperatures, where some of the countries occupy different climate zones as depicted by city temperature ranges to account for the larger country temperature fluctuations and range.
+
+5) The capabilities of R to produce graphs in different coordinates makes it very useful.
 
 #Further Work:
 
-Q2: We can do summary reports and graphical analysis for all the built-in data sets for R.
+Q2: We can examine the AGIO against the S&P 500 to see if the stock better or worse than the average top 500 stocks. We can explore the other features of time series for stocks and time sensitive data.
 
-Q3: We could increase the data set to include all the dates prior to 1900 to plot how the trend is global warming is affecting the temperature trends of every country and city. We can plot the trend of global warming and how that increases or reduces temperature range of countries and cities over time. We can use the temperature trend up to 2013 to predict how the average temperature and temperature range is going to increase for this year by comparing them with the actual data.
+Q3: We can do summary reports and graphical analysis for all the built-in data sets for R.
+
+Q4: We could increase the data set to include all the dates prior to 1900 to plot how the trend is global warming is affecting the temperature trends of every country and city. We can plot the trend of global warming and how that increases or reduces temperature range of countries and cities over time. We can use the temperature trend up to 2013 to predict how the average temperature and temperature range is going to increase for this year by comparing them with the actual data.
+
+Q5: We could use different coordinate systems to plot more graphs in 2D and 3D.
 
