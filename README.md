@@ -24,9 +24,9 @@ Questions 2 to 4 are exercises in cleaning and analyzing data using tables and g
 
 "Yao Yao Robert Flamenbaum Case Study 2 MSDS 6306 401 Q1.docx" is the document file to capture the code and the screenshot outputs for question 1.
 
-"Yao Yao Robert Flamenbaum Case Study 2 MSDS 6306 401 Q2 Q3 Q4 Q5.Rmd" is the R markdown file that is fully follows the rubric of annotating code for analysis with conclusive statements
+"Yao Yao Robert Flamenbaum Case Study 2 MSDS 6306 401 Q2-Q5.Rmd" is the R markdown file that is fully follows the rubric of annotating code for analysis with conclusive statements for questions 2 to 5
 
-"Yao_Yao_Robert_Flamenbaum_Case_Study_2_MSDS_6306_401_Q2_Q3_Q4_Q5.pdf" is the final knitted paper that combines text, code, and output into one conclusive file ready for submission
+"Yao_Yao_Robert_Flamenbaum_Case_Study_2_MSDS_6306_401_Q2-Q5.pdf" is the final knitted paper that combines text, code, and output into one conclusive file ready for submission for questions 2 to 5
 
 "DDS-Case-Study-2.Rproj" is the R project file for Rstudio
 
