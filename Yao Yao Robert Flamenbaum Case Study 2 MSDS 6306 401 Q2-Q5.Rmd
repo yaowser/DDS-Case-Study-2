@@ -1,7 +1,7 @@
 ---
 title: 'MSDS 6306 401: Case Study 2'
 author: "Yao Yao, Robert Flamenbaum"
-date: "April 12, 2017"
+date: "April 18, 2017"
 output: 
   pdf_document:
     toc: true
@@ -139,13 +139,11 @@ The volatility over the entire length of Agios Pharmaceuticals Inc (AGIO) for 10
 ##Plot the results, overlaying the volatility curves on the data, just as was done in the S&P example.
 ```{r}
 #plotting the overlay of 3 volatility functions over the same period
-plot(stockAGIO$LogReturns$vol10,type="l",xlab="Year",ylab="Volatility", ylim= c(0,0.12))
+plot(stockAGIO$LogReturns$vol10,type="l",xlab="Year",ylab="Volatility",ylim= c(0,0.12))
 par(new=TRUE)
-plot(stockAGIO$LogReturns$vol30,type="l",xlab="Year",ylab="Volatility", ylim = c(0,0.12), 
-     col="red")
+plot(stockAGIO$LogReturns$vol30,type="l",xlab="Year",ylab="Volatility",ylim= c(0,0.12),col="red")
 par(new=TRUE)
-plot(stockAGIO$LogReturns$vol100,type="l",xlab="Year",ylab="Volatility", ylim = c(0,0.12), 
-     col="blue")
+plot(stockAGIO$LogReturns$vol100,type="l",xlab="Year",ylab="Volatility",ylim= c(0,0.12),col="blue")
 title(main=paste("Plot of volatility for",stockAGIO$Ticker,"(",
                  stockAGIO$BeginDate,"to",stockAGIO$EndDate,")"))
 legend("topright",c("10","30","100"),lty=c(1,1,1),lwd=c(2,2,2),
@@ -213,17 +211,15 @@ Observations of the Orange data demonstrate that all 5 trees started out at roug
 
 #Question 4 (45 points)
 
-Download "Temp" data set at box.com (This was provided to us by local file, not from cloud)
+Download “Temp” data set (check your SMU email)
 ```{r}
 #Retrieving the country temperature files
 Temperature <- read.csv("C:\\Users\\Yao\\Documents\\GitHub\\DDS-Case-Study-2\\Data\\TEMP.csv", 
                         stringsAsFactors = FALSE)
 str(Temperature)
 ```
-There are 574k observations in Temperature and the date column needs to changed to date type.
-Dates prior to 1900 were formatted as YYYY-MM-DD, while dates after 1900 were formatted as MM/DD/YYYY.
-We are interested in the dates after 1900; therefore, the import format is %m/%d/%Y
-
+There are 574k observations in Temperature and the date column needs to changed to date type. Dates prior to 1900 were formatted as YYYY-MM-DD, while dates after 1900 were formatted as MM/DD/YYYY. We are interested in the dates after 1900; therefore, the import format is %m/%d/%Y. \newline
+\newline
 ```{r}
 #formatting the date files to extract the data 1900 and after
 Temperature$Date <- as.Date(Temperature$Date, format="%m/%d/%Y")
@@ -360,8 +356,7 @@ The fluctuations of yearly average temperature of the US looks normal until we r
 
 \newpage
 
-##(iii)	Download "CityTemp" data set at box.com. Find the difference between the maximum and the minimum temperatures for each major city and report/visualize top 20 cities with maximum differences for the period since 1900.
-(This was provided to us by local file, not from cloud)
+##(iii)	Download “CityTemp” data set (check your SMU email). Find the difference between the maximum and the minimum temperatures for each major city and report/visualize top 20 cities with maximum differences for the period since 1900. 
 ```{r}
 #Retrieveal of the citytemp file
 CityTemp <- read.csv("C:\\Users\\Yao\\Documents\\GitHub\\DDS-Case-Study-2\\Data\\CityTemp.csv", 
