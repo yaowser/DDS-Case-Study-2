@@ -20,9 +20,9 @@ Question 2 and 3 are an exercise in cleaning and analyzing data using tables and
 
 "Yao Yao Case Study 2 MSDS 6306 401 Q1.docx" is the document file to capture the code and the screenshot outputs for question 1.
 
-"Yao Yao Case Study 2 MSDS 6306 401 Q2 and Q3.Rmd" is the R markdown file that is fully follows the rubric of annotating code for analysis with conclusive statements
+"Yao Yao Case Study 2 MSDS 6306 401 Q2 Q3 Q4 Q5.Rmd" is the R markdown file that is fully follows the rubric of annotating code for analysis with conclusive statements
 
-"Yao_Yao_Case_Study_2_MSDS_6306_401_Q2_and_Q3.pdf" is the final knitted paper that combines text, code, and output into one conclusive file ready for submission
+"Yao_Yao_Case_Study_2_MSDS_6306_401_Q2_Q3_Q4_Q5.pdf" is the final knitted paper that combines text, code, and output into one conclusive file ready for submission
 
 "DDS-Case-Study-2.Rproj" is the R project file for Rstudio
 
@@ -35,6 +35,16 @@ Question 2 and 3 are an exercise in cleaning and analyzing data using tables and
 "CS2.ipynb" is the python code to create the matrix
 
 # Data directory:
+
+"DailyClosingPrice.csv" is the raw data from the AGIO stock
+
+"LogReturns.csv" is the log returns of the AGIO stock
+
+"vol10.csv" is the volatility decay at 10
+
+"vol30.csv" is the volatility decay at 30
+
+"vol100.csv" is the volatility decay at 100
 
 "TEMP.csv" is the original data of average monthly temperatures of countries
 
@@ -60,6 +70,8 @@ Question 2 and 3 are an exercise in cleaning and analyzing data using tables and
 
 "Orange.xlsx" is the original orange dataset with prework
 
-"caseStudy2.pdf" is the original assignment sheet
+"Case study 2 -401.pdf" is the original assignment sheet
 
-"caseStudy2.docx" is the original assignment sheet converted into word
+"Case study 2.docx" is the original assignment sheet converted into word
+
+"SP500.txt" is the scaffolding code to do Question 2
