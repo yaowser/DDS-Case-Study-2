@@ -44,11 +44,7 @@ Questions 2 to 4 are exercises in cleaning and analyzing data using tables and g
 
 "LogReturns.csv" is the log returns of the AGIO stock
 
-"vol10.csv" is the volatility decay at 10
-
-"vol30.csv" is the volatility decay at 30
-
-"vol100.csv" is the volatility decay at 100
+"LogReturnsVolatility" is the volatility decay at 10, 30, and 100 of the AGIO stock
 
 "TEMP.csv" is the original data of average monthly temperatures of countries
 
