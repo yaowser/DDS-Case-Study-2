@@ -37,7 +37,6 @@ data set, where the columns that are not used to answer the questions in the ana
 #Directions to run the code:
 
 ```{r, warning=FALSE, message=FALSE}
-opts_knit$set(root.dir = 'C:\\Users\\Yao\\Documents\\GitHub\\DDS-Case-Study-2\\Data')
 InstallLoadMultPackage <- function(pkg){
   new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
   if (length(new.pkg)) 
@@ -45,6 +44,7 @@ InstallLoadMultPackage <- function(pkg){
   sapply(pkg, require, character.only = TRUE)
 }
 InstallLoadMultPackage(c("plyr", "ggplot2", "dplyr","data.table","pander","knitr","tseries","zoo"))
+opts_knit$set(root.dir = 'C:\\Users\\Yao\\Documents\\GitHub\\DDS-Case-Study-2\\Data')
 ```
 
 #Question 2 (15 points)
@@ -68,7 +68,7 @@ AnalyzeStock <- function(ticker){
   # 252 trading days per year
   vol <- round(sd(logreturns) * sqrt(252)*100,2)
   plottitle <- paste("Historical Closing price for ",ticker," (",begindt, " to ", enddt,")\n",
-                     " Obs = ",obs,"  ","Historical Volatility = ",vol,sep="")
+                     " Obs = ",obs,"  ","Historical Volatility = ",vol)
   list(Ticker = ticker,
        Data=DailyClosingPrice,
        Obs=obs,
@@ -370,8 +370,8 @@ str(CityTemp)
 ```
 There are 237k observations for citytemp and the date column needs to changed to date type.
 Dates prior to 1900 were formatted as YYYY-MM-DD, while dates after 1900 were formatted as MM/DD/YYYY.
-We are interested in the dates after 1900; therefore, the import format is %m/%d/%Y
-
+We are interested in the dates after 1900; therefore, the import format is %m/%d/%Y. \newline
+\newline
 ```{r}
 #formatting the date files to extract the data 1900 and after
 CityTemp$Date <- as.Date(CityTemp$Date, format="%m/%d/%Y")
@@ -443,8 +443,8 @@ pander(DescRangeCCStdevTemp1900[1:20,],
        caption = "Top 20 Countries with the Largest Temperature Range from City Data (1900-2013)")
 ```
 
-From city temperature data converted into country temperature range (iii), the top 3 countries with max temperature ranges are China, Russia, and Canada. This could be caused by better reporting for some cities over others, with some cities having larger uncertainty measurements than that of others, which caused the whole country to have a larger temperature range.
-
+From city temperature data converted into country temperature range (iii), the top 3 countries with max temperature ranges are China, Russia, and Canada. This could be caused by better reporting for some cities over others, with some cities having larger uncertainty measurements than that of others, which caused the whole country to have a larger temperature range.\newline
+\newline
 ```{r}
 colnames(DescRangeStdevTemp1900) <- c("Country", "AvgTempRange.ByCountry", "StdevTempRange.ByCountry")
 row.names(DescRangeStdevTemp1900) <- seq(length=nrow(DescRangeStdevTemp1900))
@@ -452,8 +452,8 @@ pander(DescRangeStdevTemp1900[1:20,],
        caption = "Top 20 Countries with the Largest Temperature Range from Country Data (1900-2013)")
 ```
 
-From country temperature data (i), the top 3 countries with max temperature ranges are Kazakhstan, Mongolia, and Russia. This could be caused by better reporting for some countries over others, with some countries having larger uncertainty measurements than that of others.
-
+From country temperature data (i), the top 3 countries with max temperature ranges are Kazakhstan, Mongolia, and Russia. This could be caused by better reporting for some countries over others, with some countries having larger uncertainty measurements than that of others.\newline
+\newline
 ```{r}
 #The countries from (i) are then paired with matching countries from city data from part (iii) to do a cross
 #comparison of the country ranges
